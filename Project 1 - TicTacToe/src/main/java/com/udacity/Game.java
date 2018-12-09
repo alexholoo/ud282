@@ -150,8 +150,75 @@ public class Game {
      */
     public String checkGameWinner(char [][]grid){
         String result = "None";
-        //Student code goes here ...
+
+        // check if is tie already
+        boolean hasEmptyGrid = false;
+
+        out:
+        for (int i=0; i<3; i++){
+            for (int j=0; j<3; j++){
+                if (grid[i][j] == '-') {
+                    hasEmptyGrid = true;
+                    break out;
+                }
+            }
+        }
+
+        if (!hasEmptyGrid) {
+            result = "Tie"; // Actually maybe not tie at this point, still need to check if has winner.
+        }
+
+        // check if has winner (even if no more empty grid at this point, the last step can still result in a winner)
+        char winner = '-';
+
+
+        if (grid[1][1] != '-' && // check winner lines cross the center
+            (
+                checkLine(new char[]{grid[0][0], grid[1][1], grid[2][2]}) || // diagonal line 1
+                checkLine(new char[]{grid[2][0], grid[1][1], grid[0][2]}) || // diagonal line 2
+                checkLine(new char[]{grid[0][1], grid[1][1], grid[2][1]}) || // horizontal line 2 - middle
+                checkLine(new char[]{grid[1][0], grid[1][1], grid[1][2]}) // vertical line 2 - middle
+            )
+        ) {
+            winner = grid[1][1];
+        }
+        if (grid[0][0] != '-' && // check winner lines on the edge and starting from top-left corner
+            (
+                checkLine(new char[]{grid[0][0], grid[1][0], grid[2][0]}) || // horizontal line 1
+                checkLine(new char[]{grid[0][0], grid[0][1], grid[0][2]}) // vertical line 1
+            )
+        ) {
+            winner = grid[0][0];
+        }
+        if (grid[2][2] != '-' && // check winner lines on the edge and starting from bottom-right corner
+            (
+                checkLine(new char[]{grid[0][2], grid[1][2], grid[2][2]}) || // horizontal line 3
+                checkLine(new char[]{grid[2][0], grid[2][1], grid[2][2]}) // vertical line 3
+            )
+        ) {
+            winner = grid[2][2];
+        }
+
+        if (winner == 'o' || winner == 'x') {
+            result = Character.toString(winner).toUpperCase() + " wins";
+        }
+
         return result;
+    }
+
+    /**
+     * Check if a line (input char array) has same chars
+     * If yes, return true, else false
+     * @param charsInLine an array of chars (from a line in the game grid board)
+     * $return true if all chars in charsInLine are the same
+     */
+    public boolean checkLine(char [] charsInLine) {
+        for (int i = 1; i <charsInLine.length; i++) {
+            if (charsInLine[0] != charsInLine[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
